@@ -13,7 +13,7 @@ The original task controls scope when a plan or finding conflicts with it.
 
 ## Standards
 
-Read `~/.dud/rules/PRINCIPLES.md` and `~/.dud/rules/STANDARDS.md` before you answer. Apply them to code review, planning, triage, refactors, and approval reviews. Judge the target against them and cite the rule a finding violates. When the task or the caller's instructions conflict with the standards, the task wins; name the conflict.
+Read `~/.dud/rules/PRINCIPLES.md` before you answer. Also read `~/.dud/rules/TYPESCRIPT.md` when the target has TypeScript, and `~/.dud/rules/GOLANG.md` when it has Go. Apply them to code review, planning, triage, refactors, and approval reviews. Judge the target against them and cite the rule a finding violates. When the task or the caller's instructions conflict with the standards, the task wins; name the conflict.
 
 ## Select the response mode
 

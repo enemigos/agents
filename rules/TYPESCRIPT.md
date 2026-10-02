@@ -10,14 +10,19 @@
 // @env browser
 ```
 
-### Explicitness
+## Naming for domain modeling
 
-Favor explicit, traceable code over implicit "magic". A reader (human or agent) should be able to follow where every name comes from without running tooling.
-
-### Comments
-
-- **Avoid unnecessary comments**: Code should be self-explanatory
-- **Explain "why" not "how"**: Comments should describe the reasoning or intent, not what the code does
+- Exported symbols get 2-4 word names with a domain word. `diffUserObjects`, not `diff`; `queueEventForDispatch`, not `queue`. Use the shortest name that greps uniquely.
+- Give generic verbs an object. `sanitizeEmailHtml`, not `sanitize`; `validateSmtpConfig`, not `validateConfig`.
+- One definition site per symbol. Move and export shared helpers to a concept-named module instead of copying. Never duplicate functions.
+- Put context in the symbol, not the path. Name `formatDurationMs`, not `format` inside a `duration` module. Exception: strict conventions like contract `Input`/`Output`.
+- One concept, one spelling. Pick `organizationId` or `orgId` and use it everywhere. Reuse existing codebase terms; do not introduce near-synonyms.
+- Never use bare-role filenames. Prefix the domain: `billing-plan-config.ts`, not `config.ts`. Avoid bare `types.ts` or `utils.ts`. Use`index.ts` only for re-exports.
+- Brand primitive IDs with `z.string().brand<'UserId'>()` or newtypes. Use `(userId: UserId, orgId: OrgId)`, not `(userId: string, orgId: string)`.
+- Pass capability tokens for privileged operations. Require `OrgScopedDb`, not a raw connection.
+- Model state with discriminated unions, not nullable fields with implicit rules.
+- Name types for compiler feedback. `OrgScopedDb`, not `Ctx2`. Avoid `any`.  
+- Mark dead ends with `@deprecated` and point to the replacement.
 
 ## TypeScript
 
@@ -111,66 +116,9 @@ hasPermission(user, permission): boolean;
 
 If the project uses `better-result`, read `~/.dud/rules/BETTER-RESULT.md` for patterns.
 
-### Error Message Design
+## Frontend
 
-- Write error messages to help the reader understand and recover: say what happened, why it happened if known, what the impact is, and what to do next
-- Prefer specific, concrete wording over vague or generic messages
-- If the cause is unknown, say that plainly; do not invent false precision
-- State what is still true or preserved, especially whether data, prior work, or system state remain intact
-- Include the most useful recovery action or next diagnostic step
-- Match detail to audience: user-facing errors should be plain and actionable; internal errors should include precise operational context needed for debugging
-- Internal errors should name the failing operation, relevant identifiers, expected vs actual state when useful, and the most likely remediation path
-
-## Sensitive data, telemetry, and debugging
-
-Prefer end-to-end structured tracing across requests, jobs, workflows, application modules, adapters, and external calls.
-
-Tracing/logging should make failures diagnosable with safe fields:
-
-- domain IDs
-- operation names
-- dependency/provider names
-- state tags
-- retry counts
-- typed error tags
-- safe summaries
-
-Do not put secrets in errors, traces, logs, or snapshots.
-
-Use a `Redacted<T>` wrapper for sensitive values such as tokens, API keys, passwords, raw credentials, and secrets. Prefer Effect's `Redacted.Redacted` in Effect codebases or a local shared `Redacted<T>` wrapper.
-
-Wrap sensitive values at the boundary and unwrap only where the raw value is needed, usually inside an adapter making an external call.
-
-## Configuration and resources
-
-Parse environment/config at startup or the earliest boundary into typed config with branded/redacted values where appropriate. Return known configuration failures as tagged error values. The composition root should report a safe startup message and terminate rather than treating invalid configuration as an internal defect.
-
-Do not read `process.env` throughout the app. Missing or invalid config is a startup failure with useful, safe context.
-
-Avoid top-level side effects except in true entrypoint/bootstrap files. Modules should not start servers, open connections, read env, register handlers, or perform I/O at import time.
-
-Resource creation and cleanup should be explicit and owned by bootstrap/imperative shell code or Effect layers when using Effect.
-
-Avoid mutable singletons/global state. Constants and pure lookup tables are fine. If a singleton is required by a framework/runtime, isolate it at the boundary.
-
-Inject `Clock` / `Random` services into dependency-bearing modules. Pure domain functions may accept explicit `now` / random values.
-
-## HTTP APIs
-
-Without an error schema, a caller must guess what failed. A structured error lets the caller fix the input and retry with intent.
-
-- Each 4xx and 5xx response has a schema. 429 and 503 responses give `Retry-After` data. 400 responses identify invalid fields.
-- All errors use one schema.
-- Each error has a machine-readable code. Each schema has a human-readable message.
-- Examples do not expose internal details.
-
-Predictable names let callers infer paths safely. Inconsistent names force callers to memorize exceptions and can cause bugs.
-
-- Resource paths use nouns, such as `/users` and `/orders`. Collection paths use plural names.
-- All paths use one case. Prefer kebab-case.
-- Use HTTP methods, not action verbs in URLs.
-
-## React
+### React
 
 **BANNED: `useEffect`**
 
@@ -180,3 +128,23 @@ Banning `useEffect` forces cleaner tree design:
 - Parents own orchestration and lifecycle boundaries.
 - Children can assume preconditions are already met.
 - Each unit does one job, and coordination happens at clear boundaries.
+
+### Write better error messages
+
+Treat errors as recovery flows. Design them with product, design, and engineering alongside happy paths.
+
+Before writing, inspect the trigger and UI. Verify what failed, what succeeded or stayed safe, the known cause, placement, whether it blocks the task, and supported recovery paths. Flag missing facts or recovery options as product or engineering gaps. Never invent causes, guarantees, or actions.
+
+Use only the parts the situation needs:
+
+1. **Outcome:** State what happened in user terms, including partial success.
+2. **Cause:** Explain the known reason plainly. Own failures on our side.
+3. **Reassurance:** Say what was saved or unchanged only when verified.
+4. **Action:** Give an exact recovery step. Say where or how when needed.
+5. **Escape:** Offer another path or support if the user may remain blocked.
+
+Keep copy calm, concise, and empathetic. Do not blame users or third parties. Remove unnecessary jargon and excessive apologies. Avoid jokes or cute language when money, access, work, data, or trust is at risk. Use descriptive help links, not "Learn more." Specific messages must still be understandable and actionable.
+
+Challenge generic messages. Use a fallback only when the cause is unknown, with a next step or exit. Instrument errors, review them one month after launch, and keep improving them.
+
+Prioritize frequent or blocking errors. Track triggers, affected state, frequency, owners, fixes, and follow-up dates. Review copy and implemented behavior together.

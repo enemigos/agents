@@ -308,34 +308,6 @@ A port is not an Adapter. A port is the application-owned contract that states w
 
 The composition root parses environment and configuration, acquires resources, constructs concrete Adapters, and injects them into Application Services. Keep framework bindings and concrete wiring here; do not turn the composition root into a place for domain rules, application policy, or reusable boundary translation.
 
-## Application-owned ports and Adapter reuse
-
-Define ports beside the Application Service that needs them and in the application's language, not the provider's language. Depend on the smallest meaningful capability the operation uses; let a cohesive concrete Adapter be wider. Port inputs, outputs, and errors must be application/domain types rather than raw rows, SDK objects, or framework values.
-
-Because TypeScript is structurally typed, this works well:
-
-```ts
-type UsersForPasswordReset = {
-  findActiveByEmail(email: EmailAddress): Promise<Result<ActiveUser, UserLookupError>>;
-};
-
-export class PasswordReset {
-  constructor(private readonly users: UsersForPasswordReset) {}
-}
-```
-
-A wider adapter can satisfy it:
-
-```ts
-export class PostgresUsers {
-  findActiveByEmail(...) { ... }
-  findById(...) { ... }
-  updateProfile(...) { ... }
-}
-```
-
-This avoids both mega-repositories and one-method adapter sprawl.
-
 ### Adapter reuse audit
 
 Before creating a new adapter or service, agents must audit existing adapters/services.
@@ -394,3 +366,54 @@ Any externally observable mutation or state transition that may be retried needs
 - transactional outbox/inbox
 
 Retrying should not rely on "probably safe" side effects.
+
+# Coding Standards
+
+## HTTP APIs
+
+Without an error schema, a caller must guess what failed. A structured error lets the caller fix the input and retry with intent.
+
+- Each 4xx and 5xx response has a schema. 429 and 503 responses give `Retry-After` data. 400 responses identify invalid fields.
+- All errors use one schema.
+- Each error has a machine-readable code. Each schema has a human-readable message.
+- Examples do not expose internal details.
+
+Predictable names let callers infer paths safely. Inconsistent names force callers to memorize exceptions and can cause bugs.
+
+- Resource paths use nouns, such as `/users` and `/orders`. Collection paths use plural names.
+- All paths use one case. Prefer kebab-case.
+- Use HTTP methods, not action verbs in URLs.
+
+### Error Message Design
+
+- Write error messages to help the reader understand and recover: say what happened, why it happened if known, what the impact is, and what to do next
+- Prefer specific, concrete wording over vague or generic messages
+- If the cause is unknown, say that plainly; do not invent false precision
+- State what is still true or preserved, especially whether data, prior work, or system state remain intact
+- Include the most useful recovery action or next diagnostic step
+- Match detail to audience: user-facing errors should be plain and actionable; internal errors should include precise operational context needed for debugging
+- Internal errors should name the failing operation, relevant identifiers, expected vs actual state when useful, and the most likely remediation path
+
+## Sensitive data, telemetry, and debugging
+
+Prefer end-to-end structured tracing across requests, jobs, workflows, application modules, adapters, and external calls.
+
+Tracing/logging should make failures diagnosable with safe fields:
+
+- domain IDs
+- operation names
+- dependency/provider names
+- state tags
+- retry counts
+- typed error tags
+- safe summaries
+
+Do not put secrets in errors, traces, logs, or snapshots.
+
+### Explicitness
+
+Favor explicit, traceable code over implicit "magic". A reader (human or agent) should be able to follow where every name comes from without running tooling.
+
+### Comments
+
+Avoid code comments at all cost unless it's for JSDocs / Library documentation or a required runtime, compiler, or linter directive.
