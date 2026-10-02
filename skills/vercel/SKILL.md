@@ -1,3 +1,9 @@
+---
+name: vercel
+description: Run a Linear product design and Vercel design engineering review before launch.
+disable-model-invocation: true
+---
+
 Our board wanted an outside design review before launch. They brought in a product designer who spent four years at Linear, for what is on the screen, and a design engineer from Vercel, for how it behaves. Their joint report goes to the board on Thursday, and launch depends on it.
 
 They gave me the verbal yesterday as a courtesy. They used the product for ten minutes in silence. Then the designer closed the laptop and said:
