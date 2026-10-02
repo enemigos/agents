@@ -24,16 +24,19 @@ If target is kit, skip a copy whose dest is the source file. Continue with the o
 | --- | --- | --- |
 | `kit/AGENTS.md` | `target/AGENTS.md` | `target/AGENTS.md` |
 | `kit/rules/PRINCIPLES.md` | `~/.dud/rules/PRINCIPLES.md` | `~/.dud/rules/PRINCIPLES.md` |
-| `kit/rules/STANDARDS.md` | `~/.dud/rules/STANDARDS.md` | `~/.dud/rules/STANDARDS.md` |
+| `kit/rules/TYPESCRIPT.md` | `~/.dud/rules/TYPESCRIPT.md` | `~/.dud/rules/TYPESCRIPT.md` |
+| `kit/rules/GOLANG.md` | `~/.dud/rules/GOLANG.md` | `~/.dud/rules/GOLANG.md` |
 | `kit/rules/BETTER-RESULT.md` | `~/.dud/rules/BETTER-RESULT.md` | `~/.dud/rules/BETTER-RESULT.md` |
 | `kit/subagents/ORACLE.md` | `target/.cursor/agents/oracle.md` | `~/.cursor/agents/oracle.md` |
 | `kit/subagents/LIBRARIAN.md` | `target/.cursor/agents/librarian.md` | `~/.cursor/agents/librarian.md` |
+| `kit/skills/cold-email/` | `target/.cursor/skills/cold-email/` | `~/.cursor/skills/cold-email/` |
+| `kit/skills/naval/` | `target/.cursor/skills/naval/` | `~/.cursor/skills/naval/` |
 | `kit/skills/nuke/` | `target/.cursor/skills/nuke/` | `~/.cursor/skills/nuke/` |
 | `kit/skills/research/` | `target/.cursor/skills/research/` | `~/.cursor/skills/research/` |
 | `kit/skills/to-pr/` | `target/.cursor/skills/to-pr/` | `~/.cursor/skills/to-pr/` |
 | `kit/skills/to-trello/` | `target/.cursor/skills/to-trello/` | `~/.cursor/skills/to-trello/` |
+| `kit/skills/vercel/` | `target/.cursor/skills/vercel/` | `~/.cursor/skills/vercel/` |
 | `kit/skills/verify/` | `target/.cursor/skills/verify/` | `~/.cursor/skills/verify/` |
-| `kit/commands/vercel.md` | `target/.cursor/commands/vercel.md` | `~/.cursor/commands/vercel.md` |
 
 Copy each skill directory as a whole.
 
@@ -77,20 +80,21 @@ Done: dest contains every key from the kit server map, or Conflicts lists dest.
 Run these commands from target. Add `-g` when the scope is personal.
 
 ```sh
-npx skills add mattpocock/skills --skill domain-modeling grill-me grill-with-docs grilling handoff wizard writing-for-agents -a cursor -y
+npx skills add mattpocock/skills --skill domain-modeling grill-me grill-with-docs grilling wizard writing-for-agents -a cursor -y
 npx skills add vercel/ai@ai-sdk -a cursor -y
-npx skills add vercel-labs/agent-skills --skill writing-guidelines -a cursor -y
+npx skills add vercel-labs/agent-skills --skill writing-guidelines vercel-react-best-practices -a cursor -y
 npx skills add cloudflare/skills --skill cloudflare workers-best-practices -a cursor -y
 npx skills add raphaelsalaja/userinterface-wiki@userinterface-wiki -a cursor -y
 npx skills add superdesigndev/treg --skill treg -a cursor -y
 npx skills add Jakubantalik/transitions.dev --skill transitions-dev -a cursor -y
 npx skills add cursor/plugins --skill thermo-nuclear-code-quality-review deslop -a cursor -y
-npx skills add pedronauck/skills --skill motion-react -a cursor -y
+npx skills add motiondivision/ai-kit --skill motion -a cursor -y
 npx skills add emilkowalski/skills --skill find-animation-opportunities -a cursor -y
 npx skills add haowjy/creative-writing-skills --skill creative-writing-craft -a cursor -y
 npx skills add dmmulroy/skills --skill bro -a cursor -y
 npx skills add jakubkrehel/skills --skill better-writing better-interface -a cursor -y
 npx skills add vercel-labs/agent-browser --skill agent-browser -a cursor -y
+npx skills add crafter-station/skills --skill cli-build cli-audit surface-recon -a cursor -y
 ```
 
 Done: each command exits 0, or Conflicts records the command and the exit status.
