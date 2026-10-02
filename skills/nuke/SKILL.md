@@ -4,7 +4,7 @@ description: "Review changes or current architecture with three exclusive Oracle
 disable-model-invocation: true
 ---
 
-Review changes or current architecture with three exclusive Oracle reviews. One Oracle agent file. One brief per axis. The main agent handles context, verification, lane dispatch, synthesis, and the final gate verdict. OpenSpec is optional.
+Review changes or current architecture with three exclusive Oracle reviews. One Oracle agent file. One brief per axis. The main agent handles context, verification, heal, lane dispatch, synthesis, and the final gate verdict. OpenSpec is optional.
 
 ## 1. Initial verification
 
@@ -21,7 +21,11 @@ Review changes or current architecture with three exclusive Oracle reviews. One 
    If the diff and untracked files are empty, stop.
 5. For `architecture`, record the current `HEAD` hash and the source files, dependencies, and tests in `SCOPE`. Include relevant dirty and untracked files. Review their current contents even when the diff is empty. `HEAD` records the starting commit, not a comparison that limits findings.
 6. Resolve the optional `SPEC_TARGET` with the specification rules below.
-7. Run repository test, lint, and type checks. Record command names, exit codes, and output text as check evidence.
+7. Run each defined check. A defined check is a test, lint, format-check, or type command the project already has. Record command names, exit codes, output text, and any heal as check evidence.
+   If a defined check is red, heal it: apply the smallest change that makes that check green, then rerun the defined checks. After a heal, refresh the `changes` diff and untracked files, or the `architecture` scoped file list.
+   Done: every defined check is green.
+
+If a defined check stays red after heal, report `Verdict: Cannot approve` with the check evidence in the section 3 order, then stop.
 
 ### Specification target
 
@@ -42,6 +46,8 @@ For OpenSpec discovery or resolution, run local commands from the selected plann
 For change deltas, include the matching canonical specs from the same OpenSpec root. Review the requirements after additions, modifications, removals, and renames. Superseded requirements do not remain obligations.
 
 ## 2. Parallel review lanes
+
+Start this section only when every defined check is green.
 
 Three exclusive reviews:
 
@@ -86,9 +92,9 @@ Read the scoped code and tests. In `changes`, trace the diff's effects. In `arch
 
 You are the Standards reviewer only. Report only convention findings. This original task overrides the installed Oracle review checklist.
 
-Denotation: convention. File a finding when the reviewed code violates `~/.dud/rules/STANDARDS.md`.
+Denotation: convention. File a finding when the reviewed code violates the rules file for its language: `~/.dud/rules/TYPESCRIPT.md` for TypeScript, `~/.dud/rules/GOLANG.md` for Go.
 
-Read `~/.dud/rules/STANDARDS.md`. When that file points at `~/.dud/rules/BETTER-RESULT.md`, read it too. Read `~/.dud/rules/PRINCIPLES.md` only for Model the Domain, Boundary Discipline, and Modules and abstractions excluding Deep modules. Skip checks that tooling already enforces.
+Read the rules file for each language in the reviewed code. When `TYPESCRIPT.md` points at `~/.dud/rules/BETTER-RESULT.md`, read it too. Read `~/.dud/rules/PRINCIPLES.md` only for Model the Domain, Boundary Discipline, and Modules and abstractions excluding Deep modules. Skip checks that tooling already enforces.
 
 ### Lane 3: Complexity
 
@@ -119,9 +125,9 @@ Read the thermo-nuclear skill at the resolved path. Keep its items only when the
 
 ## 4. Review after fixes
 
-Keep `/nuke` review-only. Apply the remediation in the implementation session.
+Heal red defined checks in this session. Apply Oracle remediations in the implementation session.
 
 1. For a rerun, retain `MODE`, `SCOPE`, `REVIEW_CONTEXT`, and `SPEC_TARGET`. For `changes`, retain the literal `$BASE` commit hash. If scope, requirements, or artifact paths change, resolve them again and disclose the change.
 2. For `changes`, collect the current diff, commit log, and untracked files against `$BASE`. For `architecture`, refresh `HEAD` and the scoped file list. Reinspect the current contents in either mode.
-3. Rerun the required checks and all review lanes with fresh reviewers. Earlier approvals do not cover later edits.
+3. Rerun the checks from step 7, including heal. Launch fresh review lanes when every defined check is green. Earlier approvals do not cover later edits.
 4. Repeat after fixes until every lane returns `Verdict: Approved`. If a blocker prevents verification, return `Verdict: Cannot approve`.
