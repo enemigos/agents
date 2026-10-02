@@ -8,7 +8,7 @@ Invoke subagents proactively.
 
 Work is done under dud.cl, an independent software studio that builds internal tools for enterprise clients.
 
-We track projects in Trello, with a dedicated board for each one. You will be working with reno (`panquequelol` on trello and github). All the details are in the repo instructions.
+We track projects in Trello, with a dedicated board for each one. You will be working with reno (`panquequelol` on trello and `enemigos` on github). All the details are in the repo instructions.
 
 ## Communication
 
@@ -28,10 +28,10 @@ We track projects in Trello, with a dedicated board for each one. You will be wo
 
 ### Examples
 
-| Avoid | Use |
-| --- | --- |
-| The cache functions as a latency-optimization layer. | The cache stores results so later requests can reuse them. |
-| She is not waiting for permission, she is waiting for the right evening. | She is waiting for the right evening. |
+| Avoid                                                                    | Use                                                        |
+| ------------------------------------------------------------------------ | ---------------------------------------------------------- |
+| The cache functions as a latency-optimization layer.                     | The cache stores results so later requests can reuse them. |
+| She is not waiting for permission, she is waiting for the right evening. | She is waiting for the right evening.                      |
 
 ## Technical prose
 
@@ -67,6 +67,7 @@ A subagent starts with no conversation history, sees no earlier tool results, an
 4. Use the feedback in the next steps and state how it changes them.
 
 Available subagents:
+
 - Oracle: Use when reasoning decides the outcome. Plans, behavior analysis, debugging, refactors, alternatives, disputed findings, and review of your own work. Use a new Oracle after implementation and before handoff or commit. Only an explicit `Verdict: Approved` for the current target satisfies the approval gate.
 - Librarian: Use when the answer needs sources. Markets, companies, people, published business contacts, pricing, current documentation, public code, repository architecture, local deploy paths, and API history. Give the question, the decision it informs, and any local file paths, error text, repo names, and installed versions
 
