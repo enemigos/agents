@@ -52,6 +52,7 @@ Use ASD-STE100 Simplified Technical English for documentation, READMEs, pull-req
 - Make behavior clear from the code. Break down functions that need comments to explain what they do.
 - Use Conventional Commits. The description must complete "If applied, this commit will [description]." Example: `fix(map): preserve territory retries after empty bootstrap cache`.
 - Start a dev server or run a build only when explicitly asked.
+- When a `verify` run reports `Unmapped`, `No MAP.md`, or a `Map drift` that the task intended, tell the user to run `/update-verify` in the same chat.
 - Use self-explanatory UI labels. Add supporting copy only to prevent misunderstanding. Never restate a heading.
 - Extract recurring or meaningful values into descriptive constants. Keep self-explanatory, one-off values inline.
 
