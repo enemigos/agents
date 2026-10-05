@@ -1,8 +1,8 @@
 # Install
 
-You install this kit into a Cursor project.
+You install this kit into a project.
 
-Kit is the directory that contains this file. Target is the named project path, or the current working directory.
+Kit is the directory that contains this file. Target is the named project path, or the current working directory. Agent dir is the config directory of the agent that runs this guide. Use the agent dir name that your agent reads.
 
 ## Rule
 
@@ -27,16 +27,18 @@ If target is kit, skip a copy whose dest is the source file. Continue with the o
 | `kit/rules/TYPESCRIPT.md` | `~/.dud/rules/TYPESCRIPT.md` | `~/.dud/rules/TYPESCRIPT.md` |
 | `kit/rules/GOLANG.md` | `~/.dud/rules/GOLANG.md` | `~/.dud/rules/GOLANG.md` |
 | `kit/rules/BETTER-RESULT.md` | `~/.dud/rules/BETTER-RESULT.md` | `~/.dud/rules/BETTER-RESULT.md` |
-| `kit/subagents/ORACLE.md` | `target/.cursor/agents/oracle.md` | `~/.cursor/agents/oracle.md` |
-| `kit/subagents/LIBRARIAN.md` | `target/.cursor/agents/librarian.md` | `~/.cursor/agents/librarian.md` |
-| `kit/skills/cold-email/` | `target/.cursor/skills/cold-email/` | `~/.cursor/skills/cold-email/` |
-| `kit/skills/naval/` | `target/.cursor/skills/naval/` | `~/.cursor/skills/naval/` |
-| `kit/skills/nuke/` | `target/.cursor/skills/nuke/` | `~/.cursor/skills/nuke/` |
-| `kit/skills/research/` | `target/.cursor/skills/research/` | `~/.cursor/skills/research/` |
-| `kit/skills/to-pr/` | `target/.cursor/skills/to-pr/` | `~/.cursor/skills/to-pr/` |
-| `kit/skills/to-trello/` | `target/.cursor/skills/to-trello/` | `~/.cursor/skills/to-trello/` |
-| `kit/skills/vercel/` | `target/.cursor/skills/vercel/` | `~/.cursor/skills/vercel/` |
-| `kit/skills/verify/` | `target/.cursor/skills/verify/` | `~/.cursor/skills/verify/` |
+| `kit/subagents/ORACLE.md` | `target/<agent dir>/agents/oracle.md` | `~/<agent dir>/agents/oracle.md` |
+| `kit/subagents/LIBRARIAN.md` | `target/<agent dir>/agents/librarian.md` | `~/<agent dir>/agents/librarian.md` |
+| `kit/skills/cold-email/` | `target/<agent dir>/skills/cold-email/` | `~/<agent dir>/skills/cold-email/` |
+| `kit/skills/naval/` | `target/<agent dir>/skills/naval/` | `~/<agent dir>/skills/naval/` |
+| `kit/skills/nuke/` | `target/<agent dir>/skills/nuke/` | `~/<agent dir>/skills/nuke/` |
+| `kit/skills/research/` | `target/<agent dir>/skills/research/` | `~/<agent dir>/skills/research/` |
+| `kit/skills/so/` | `target/<agent dir>/skills/so/` | `~/<agent dir>/skills/so/` |
+| `kit/skills/to-pr/` | `target/<agent dir>/skills/to-pr/` | `~/<agent dir>/skills/to-pr/` |
+| `kit/skills/to-trello/` | `target/<agent dir>/skills/to-trello/` | `~/<agent dir>/skills/to-trello/` |
+| `kit/skills/update-verify/` | `target/<agent dir>/skills/update-verify/` | `~/<agent dir>/skills/update-verify/` |
+| `kit/skills/vercel/` | `target/<agent dir>/skills/vercel/` | `~/<agent dir>/skills/vercel/` |
+| `kit/skills/verify/` | `target/<agent dir>/skills/verify/` | `~/<agent dir>/skills/verify/` |
 
 Copy each skill directory as a whole.
 
@@ -61,15 +63,15 @@ A kept `oracle.md` that differs from the kit does not load these Oracle rules. R
 
 ## MCP
 
-MCP dest is `target/.cursor/mcp.json` for project scope. MCP dest is `~/.cursor/mcp.json` for personal scope.
+MCP dest is the MCP config file that your agent reads. Use `target/<agent dir>/mcp.json` for project scope and `~/<agent dir>/mcp.json` for personal scope. Use another path when your agent reads MCP config from there.
 
-Read `kit/mcp.json`. Cursor dest uses root key `mcpServers`.
+Read `kit/mcp.json`. Root key is the key that the dest format uses for the server map. Most agents use `mcpServers`.
 
-1. Create the dest file with `{ "mcpServers": {} }` when it is absent.
+1. Create the dest file with `{ "<root key>": {} }` when it is absent.
 2. Take the server map from `kit/mcp.json`. If that file has key `mcpServers`, use that object. If it does not, use the root object.
-3. Add a kit server key when that key is absent from dest. When you add `exa`, set header `x-api-key` to `${env:EXA_API_KEY}`.
+3. Add a kit server key when that key is absent from dest. When you add `exa`, set header `x-api-key` to a reference to env var `EXA_API_KEY`. Use the env var syntax that the dest format uses.
 4. Keep a key when it already exists. Add dest to Conflicts when a kit key exists and differs.
-5. When you compare `exa`, treat kit value `${EXA_API_KEY}` as a match for dest `${env:EXA_API_KEY}`.
+5. When you compare `exa`, treat any reference to env var `EXA_API_KEY` as a match, such as `${EXA_API_KEY}` or `${env:EXA_API_KEY}`.
 
 Report when `EXA_API_KEY` is unset.
 
@@ -77,24 +79,26 @@ Done: dest contains every key from the kit server map, or Conflicts lists dest.
 
 ## External skills
 
-Run these commands from target. Add `-g` when the scope is personal.
+Run these commands from target. Add `-g` when the scope is personal. Add `-a <agent>` to install for one agent.
 
 ```sh
-npx skills add mattpocock/skills --skill domain-modeling grill-me grill-with-docs grilling wizard writing-for-agents -a cursor -y
-npx skills add vercel/ai@ai-sdk -a cursor -y
-npx skills add vercel-labs/agent-skills --skill writing-guidelines vercel-react-best-practices -a cursor -y
-npx skills add cloudflare/skills --skill cloudflare workers-best-practices -a cursor -y
-npx skills add raphaelsalaja/userinterface-wiki@userinterface-wiki -a cursor -y
-npx skills add superdesigndev/treg --skill treg -a cursor -y
-npx skills add Jakubantalik/transitions.dev --skill transitions-dev -a cursor -y
-npx skills add cursor/plugins --skill thermo-nuclear-code-quality-review deslop -a cursor -y
-npx skills add motiondivision/ai-kit --skill motion -a cursor -y
-npx skills add emilkowalski/skills --skill find-animation-opportunities -a cursor -y
-npx skills add haowjy/creative-writing-skills --skill creative-writing-craft -a cursor -y
-npx skills add dmmulroy/skills --skill bro -a cursor -y
-npx skills add jakubkrehel/skills --skill better-writing better-interface -a cursor -y
-npx skills add vercel-labs/agent-browser --skill agent-browser -a cursor -y
-npx skills add crafter-station/skills --skill cli-build cli-audit surface-recon -a cursor -y
+npx skills add mattpocock/skills --skill codebase-design domain-modeling grill-me grill-with-docs grilling handoff improve-codebase-architecture wizard writing-for-agents -y
+npx skills add vercel/ai@ai-sdk -y
+npx skills add vercel-labs/agent-skills --skill writing-guidelines vercel-react-best-practices -y
+npx skills add cloudflare/skills --skill cloudflare workers-best-practices -y
+npx skills add raphaelsalaja/userinterface-wiki@userinterface-wiki -y
+npx skills add superdesigndev/treg --skill treg -y
+npx skills add Jakubantalik/transitions.dev --skill transitions-dev -y
+npx skills add cursor/plugins --skill thermo-nuclear-code-quality-review deslop -y
+npx skills add motiondivision/ai-kit --skill motion -y
+npx skills add emilkowalski/skills --skill find-animation-opportunities mobile-native break-ui -y
+npx skills add haowjy/creative-writing-skills --skill creative-writing-craft -y
+npx skills add dmmulroy/skills --skill bro -y
+npx skills add dmmulroy/better-result --skill adopt-better-result -y
+npx skills add supabase/agent-skills --skill supabase supabase-postgres-best-practices -y
+npx skills add jakubkrehel/skills --skill better-writing better-interface -y
+npx skills add vercel-labs/agent-browser --skill agent-browser -y
+npx skills add crafter-station/skills --skill cli-build cli-audit surface-recon -y
 ```
 
 Done: each command exits 0, or Conflicts records the command and the exit status.
