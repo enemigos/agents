@@ -26,6 +26,8 @@ Create the draft PR on GitHub with the body as its description.
 4. Do not write or return the body as a file. Do not create a local or temporary PR-description artifact.
 5. If GitHub access fails, report the error. Do not save the body locally as a workaround.
 
+The PR description does not need Simplified Technical English (STE). Keep it minimal, casual, and free of jargon.
+
 In the PR description:
 
 1. Write exactly two sentences in two short paragraphs.
