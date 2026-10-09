@@ -416,4 +416,4 @@ Favor explicit, traceable code over implicit "magic". A reader (human or agent) 
 
 ### Comments
 
-Avoid code comments at all cost unless it's for JSDocs / Library documentation or a required runtime, compiler, or linter directive.
+Avoid code comments at all cost unless it's for JSDocs / Library documentation, a required runtime, compiler, or linter directive, or a runtime indicator such as `// @env node`.
