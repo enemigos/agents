@@ -36,9 +36,7 @@ If target is kit, skip a copy whose dest is the source file. Continue with the o
 | `kit/skills/so/` | `target/<agent dir>/skills/so/` | `~/<agent dir>/skills/so/` |
 | `kit/skills/to-pr/` | `target/<agent dir>/skills/to-pr/` | `~/<agent dir>/skills/to-pr/` |
 | `kit/skills/to-trello/` | `target/<agent dir>/skills/to-trello/` | `~/<agent dir>/skills/to-trello/` |
-| `kit/skills/update-verify/` | `target/<agent dir>/skills/update-verify/` | `~/<agent dir>/skills/update-verify/` |
 | `kit/skills/vercel/` | `target/<agent dir>/skills/vercel/` | `~/<agent dir>/skills/vercel/` |
-| `kit/skills/verify/` | `target/<agent dir>/skills/verify/` | `~/<agent dir>/skills/verify/` |
 
 Copy each skill directory as a whole.
 
@@ -56,8 +54,10 @@ Copy each skill directory as a whole.
    Done: the MCP completion line is met.
 6. Go to heading External skills and apply it.
    Done: the External skills completion line is met.
-7. Print Written, Skipped, and Conflicts.
-   Done: every dest from steps 4 to 6 is in exactly one list.
+7. Go to heading OpenSpec and apply it.
+   Done: the OpenSpec completion line is met.
+8. Print Written, Skipped, and Conflicts.
+   Done: every dest from steps 4 to 7 is in exactly one list.
 
 A kept `oracle.md` that differs from the kit does not load these Oracle rules. Report that path in Conflicts.
 
@@ -76,6 +76,35 @@ Read `kit/mcp.json`. Root key is the key that the dest format uses for the serve
 Report when `EXA_API_KEY` is unset.
 
 Done: dest contains every key from the kit server map, or Conflicts lists dest.
+
+## OpenSpec
+
+OpenSpec adds the `opsx` commands to your agent. The flow uses `propose`, `apply`, and `archive`.
+
+| Agent | Tool ID | Skills dir | Propose command |
+| --- | --- | --- | --- |
+| Claude Code | `claude` | `.claude/skills` | `/opsx:propose` |
+| Droid | `factory` | `.factory/skills` | `/opsx-propose` |
+| Cursor | `cursor` | `.cursor/skills` | `/opsx-propose` |
+| Codex | `codex` | `.agents/skills` | `$openspec-propose` |
+
+1. Check that Node.js 20.19.0 or later is on the PATH.
+2. If it is not, add this heading to Conflicts.
+3. If `openspec --version` fails, run `npm install -g @fission-ai/openspec@latest`.
+4. If the install command fails, add the command and its exit status to Conflicts.
+5. If the scope is personal, stop here.
+6. If your agent is not in the table, add this heading to Conflicts.
+7. Set Present to the paths that match `target/openspec` and `target/<skills dir>/openspec-*`.
+8. If Present is not empty, add each path to Conflicts.
+9. Run `openspec init --tools <tool id>` from target.
+10. If `target/openspec/config.yaml` is absent, add its path to Conflicts.
+11. If no file matches `target/<skills dir>/openspec-*/SKILL.md`, add the pattern to Conflicts.
+
+After step 2, 4, 6, or 8 adds to Conflicts, skip all later steps. For personal scope, run steps 6 to 11 later in each project. Never run `openspec update`. It can overwrite generated files.
+
+The default profile includes `propose`, `explore`, `apply`, `update`, `sync`, and `archive`.
+
+Done: step 2, 4, 6, or 8 added to Conflicts. Or `openspec --version` prints a version and, for project scope, each file from steps 10 and 11 exists or Conflicts lists it.
 
 ## External skills
 
