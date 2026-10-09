@@ -40,7 +40,11 @@ All steps in problem-solving must be explicit, pure and composable.
 - Schema-derived types: Reach for `Pick`/`Omit`/`Parameters`/`ReturnType`/`Awaited`/`typeof` before declaring a new interface.
 - Object args: Pass objects, not positional, so argument order is self-documenting. Skip on hot paths (per-frame render, tokenizers, parsers).
 - `Type` > `interface`
-- `Function` > Arrow functions (`() => {...}`). Arrow functions only used in callbacks. Composing a feature? `Function`, Piping a map? `.map((...) => {...})`
+- Arrow functions are for inline callbacks only: a function written as an argument, such as `.map((user) => user.id)` or `result.match({ ok: (data) => data })`. The arrow keeps a short callback short.
+- Every other function uses the `function` keyword: exported, module-level, nested, and named helpers. A standalone `function` is easy to spot when you scan a file.
+- NEVER bind an arrow function to a `const`, `let`, object property, or export. Write `function toHttpResponse(...) {}`, not `const toHttpResponse = (...) => {}`.
+- In an `export const X = { ... } as const` module object, reference functions declared with `function`. Do not write arrows as properties.
+- If an inline callback grows past a few lines or needs a name, move it to a `function` declaration.
 - Prefer small, cohesive modules organized around one primary domain type or concept
 - In TypeScript, when a module is centered on a primary type, prefer an OCaml-style namespaced module pattern: `export type X = ...` plus `export const X = { ... } as const` for constructors, parsers, combinators, and other domain operations
 - Prefer attaching domain logic to the module for its primary type rather than scattering it across generic utility files

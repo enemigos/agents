@@ -25,13 +25,15 @@ USE `matchError(error, handlers)` for structurally tagged errors. USE `matchErro
 ## Functional Composition
 
 ```typescript
-const processUser = (result: Result<User, AppError>) => result
-  .map((user) => user.name)
-  .map((name) => name.toUpperCase())
-  .match({
-    ok: (name) => `User: ${name}`,
-    err: (error) => `Failed: ${error.message}`,
-  });
+function processUser(result: Result<User, AppError>): string {
+  return result
+    .map((user) => user.name)
+    .map((name) => name.toUpperCase())
+    .match({
+      ok: (name) => `User: ${name}`,
+      err: (error) => `Failed: ${error.message}`,
+    });
+}
 ```
 
 ## Error handling
@@ -68,28 +70,28 @@ type AuthenticationError = AuthError | DbError;
 ```typescript
 type ApiError = NotFoundError | ValidationError | InternalError;
 
-const toHttpResponse = (
-  result: Result<Data, ApiError>
-): HttpResponse => result.match({
-  ok: (data) => ({
-    status: 200,
-    body: JSON.stringify(data),
-  }),
-  err: (error) => error.match({
-    NotFoundError: (e) => ({
-      status: 404,
-      body: JSON.stringify({ error: e.message }),
+function toHttpResponse(result: Result<Data, ApiError>): HttpResponse {
+  return result.match({
+    ok: (data) => ({
+      status: 200,
+      body: JSON.stringify(data),
     }),
-    ValidationError: (e) => ({
-      status: 400,
-      body: JSON.stringify({ field: e.field, error: e.message }),
+    err: (error) => error.match({
+      NotFoundError: (e) => ({
+        status: 404,
+        body: JSON.stringify({ error: e.message }),
+      }),
+      ValidationError: (e) => ({
+        status: 400,
+        body: JSON.stringify({ field: e.field, error: e.message }),
+      }),
+      InternalError: () => ({
+        status: 500,
+        body: JSON.stringify({ error: "Internal server error" }),
+      }),
     }),
-    InternalError: () => ({
-      status: 500,
-      body: JSON.stringify({ error: "Internal server error" }),
-    }),
-  }),
-});
+  });
+}
 ```
 
 ## Generators
@@ -115,12 +117,14 @@ class InactiveUser extends TaggedError("InactiveUser")<{
   message: string;
 }> {}
 
-const authorize = (user: User) => Result.gen(function* () {
-  if (!user.active) {
-    yield* new InactiveUser({ userId: user.id, message: "User is inactive" });
-  }
-  return Result.ok(user);
-});
+function authorize(user: User) {
+  return Result.gen(function* () {
+    if (!user.active) {
+      yield* new InactiveUser({ userId: user.id, message: "User is inactive" });
+    }
+    return Result.ok(user);
+  });
+}
 ```
 
 ## Retries
