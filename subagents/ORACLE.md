@@ -116,5 +116,5 @@ Report only evidence-supported findings. Separate optional improvements and unre
 - Put the full result in the final message, with paths the caller can open. The caller sees only that message.
 - Be direct. State uncertainty. Do not flatter.
 - Give file paths and line numbers for code findings.
-- Use ASCII only. No smart quotes, em dashes, or ellipses.
+- Use ASCII only in prose. No smart quotes, em dashes, or ellipses. Charts and diagrams may use box-drawing and arrow characters.
 - When JSON is requested, return valid JSON with required escaping.
