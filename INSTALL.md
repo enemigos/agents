@@ -1,22 +1,26 @@
 # Install
 
-You install this kit into a project. The install can also copy the rules to your global agent instructions.
+You install this kit into a project. The install can also link the rules to your global agent instructions.
 
 Kit is the directory that contains this file. Target is the named project path, or the current working directory. Agent dir is the config directory of the agent that runs this guide. Use the agent dir name that your agent reads.
 
 ## Rule
 
-Detect each destination before you write.
+Every destination is a link to its source. A link cannot diverge from the kit, so the kit stays the single source and no copy needs a merge. A second copy of a kit file is the mistake this rule prevents.
 
-1. Write the destination when it is absent.
-2. Skip the destination when it matches the source.
-3. Keep the destination when it differs. Add the path to Conflicts.
+1. Link the destination when it is absent. Create a parent directory when it is absent.
+2. Leave the destination when it is a link to the source.
+3. Keep the destination when it is a regular file or a directory. Add the path to Conflicts. Do not delete it.
+4. Keep the destination when it is a link to another path. Add the path and its target to Conflicts.
+5. When a link fails, add the path to Conflicts. Do not copy in its place.
 
-Create a parent directory when it is absent.
+Never write a copy of a kit file beside a destination, such as a `.bak`, `.orig`, `.old`, or `*~` file. Report the path and the difference instead.
+
+Do not edit a destination. Edit its source.
 
 Default scope is project. If the user asks for a personal install, use the personal dest.
 
-If target is kit, skip a copy whose dest is the source file. Continue with the other dests.
+If target is kit, skip a link whose dest is the source file. Continue with the other dests.
 
 ## Destinations
 
@@ -30,6 +34,8 @@ If target is kit, skip a copy whose dest is the source file. Continue with the o
 | `kit/subagents/ORACLE.md` | `target/<agent dir>/agents/oracle.md` | `~/<agent dir>/agents/oracle.md` |
 | `kit/subagents/LIBRARIAN.md` | `target/<agent dir>/agents/librarian.md` | `~/<agent dir>/agents/librarian.md` |
 
+Some agents also store per-agent settings, such as a model, a tool list, and a timeout, in the agent file. A link then removes that file's own content. Add the path to Conflicts and tell the user to paste the Oracle and Librarian text into the existing profile file.
+
 ## Steps
 
 1. Set kit to the directory that contains this file.
@@ -38,8 +44,8 @@ If target is kit, skip a copy whose dest is the source file. Continue with the o
    Done: target exists and is a directory.
 3. Create `~/.dud/rules` when it is absent.
    Done: `~/.dud/rules` is a directory.
-4. Copy each source in Destinations to its dest. Use the Rule.
-   Done: each dest is a write, a skip, or a Conflicts entry.
+4. Link each source in Destinations to its dest. Use the Rule.
+   Done: each dest is a link, a skip, or a Conflicts entry.
 5. Go to heading Global rules and apply it.
    Done: the Global rules completion line is met.
 6. Go to heading MCP and apply it.
@@ -48,17 +54,17 @@ If target is kit, skip a copy whose dest is the source file. Continue with the o
    Done: the External skills completion line is met.
 8. Go to heading OpenSpec and apply it.
    Done: the OpenSpec completion line is met.
-9. Print Written, Skipped, and Conflicts.
+9. Print Linked, Skipped, and Conflicts.
    Done: every dest from steps 4 to 8 is in exactly one list.
 
-A kept `oracle.md` that differs from the kit does not load these Oracle rules. Report that path in Conflicts.
+A kept `oracle.md` that is not a link to the kit does not carry these Oracle rules. Report that path in Conflicts.
 
 ## Global rules
 
-Each agent reads its own global instructions file. The install copies the kit rules to the global file of each agent the user uses. When the user picks no agent, skip this section.
+Each agent reads its own global instructions file. The install links the kit rules into the global file of each agent the user uses. When the user picks no agent, skip this section.
 
 1. Ask the user which agents in the table they use.
-2. Use the Rule to copy `kit/AGENTS.md` to the dest of each picked agent.
+2. Use the Rule to link `kit/AGENTS.md` to the dest of each picked agent.
 
 | Agent | Dest |
 | --- | --- |
@@ -73,11 +79,13 @@ Each agent reads its own global instructions file. The install copies the kit ru
 | Qwen Code | `~/.qwen/QWEN.md` |
 | Cursor | None |
 
-Do not create `~/.codex/AGENTS.override.md`. That file shadows the copied file. When that file exists, add its path to Conflicts.
+Do not create `~/.codex/AGENTS.override.md`. That file shadows the linked file. When that file exists, add its path to Conflicts.
+
+Some agents read a second instructions file in the same directory, such as `AGENTS.md` next to `GEMINI.md` or `CLAUDE.md`. Both files reach the agent, and the table names only one. Link the second file to the same source, or add its path to Conflicts.
 
 Cursor has no global instructions file. When the user picks Cursor, tell them to paste the rules into Settings → Rules. Add Cursor to Skipped.
 
-Done: each picked agent is a write, a skip, or a Conflicts entry. Each agent the user did not pick stays untouched.
+Done: each picked agent is a link, a skip, or a Conflicts entry. Each agent the user did not pick stays untouched.
 
 ## MCP
 
