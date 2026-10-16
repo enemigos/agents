@@ -1,6 +1,6 @@
 # Install
 
-You install this kit into a project.
+You install this kit into a project. The install can also copy the rules to your global agent instructions.
 
 Kit is the directory that contains this file. Target is the named project path, or the current working directory. Agent dir is the config directory of the agent that runs this guide. Use the agent dir name that your agent reads.
 
@@ -29,16 +29,6 @@ If target is kit, skip a copy whose dest is the source file. Continue with the o
 | `kit/rules/BETTER-RESULT.md` | `~/.dud/rules/BETTER-RESULT.md` | `~/.dud/rules/BETTER-RESULT.md` |
 | `kit/subagents/ORACLE.md` | `target/<agent dir>/agents/oracle.md` | `~/<agent dir>/agents/oracle.md` |
 | `kit/subagents/LIBRARIAN.md` | `target/<agent dir>/agents/librarian.md` | `~/<agent dir>/agents/librarian.md` |
-| `kit/skills/cold-email/` | `target/<agent dir>/skills/cold-email/` | `~/<agent dir>/skills/cold-email/` |
-| `kit/skills/naval/` | `target/<agent dir>/skills/naval/` | `~/<agent dir>/skills/naval/` |
-| `kit/skills/nuke/` | `target/<agent dir>/skills/nuke/` | `~/<agent dir>/skills/nuke/` |
-| `kit/skills/research/` | `target/<agent dir>/skills/research/` | `~/<agent dir>/skills/research/` |
-| `kit/skills/so/` | `target/<agent dir>/skills/so/` | `~/<agent dir>/skills/so/` |
-| `kit/skills/to-pr/` | `target/<agent dir>/skills/to-pr/` | `~/<agent dir>/skills/to-pr/` |
-| `kit/skills/to-trello/` | `target/<agent dir>/skills/to-trello/` | `~/<agent dir>/skills/to-trello/` |
-| `kit/skills/vercel/` | `target/<agent dir>/skills/vercel/` | `~/<agent dir>/skills/vercel/` |
-
-Copy each skill directory as a whole.
 
 ## Steps
 
@@ -50,16 +40,44 @@ Copy each skill directory as a whole.
    Done: `~/.dud/rules` is a directory.
 4. Copy each source in Destinations to its dest. Use the Rule.
    Done: each dest is a write, a skip, or a Conflicts entry.
-5. Go to heading MCP and apply it.
+5. Go to heading Global rules and apply it.
+   Done: the Global rules completion line is met.
+6. Go to heading MCP and apply it.
    Done: the MCP completion line is met.
-6. Go to heading External skills and apply it.
+7. Go to heading External skills and apply it.
    Done: the External skills completion line is met.
-7. Go to heading OpenSpec and apply it.
+8. Go to heading OpenSpec and apply it.
    Done: the OpenSpec completion line is met.
-8. Print Written, Skipped, and Conflicts.
-   Done: every dest from steps 4 to 7 is in exactly one list.
+9. Print Written, Skipped, and Conflicts.
+   Done: every dest from steps 4 to 8 is in exactly one list.
 
 A kept `oracle.md` that differs from the kit does not load these Oracle rules. Report that path in Conflicts.
+
+## Global rules
+
+Each agent reads its own global instructions file. The install copies the kit rules to the global file of each agent the user uses. When the user picks no agent, skip this section.
+
+1. Ask the user which agents in the table they use.
+2. Use the Rule to copy `kit/AGENTS.md` to the dest of each picked agent.
+
+| Agent | Dest |
+| --- | --- |
+| Factory Droid | `~/.factory/AGENTS.md` |
+| pi | `~/.pi/agent/AGENTS.md` |
+| opencode | `~/.config/opencode/AGENTS.md` |
+| Codex | `~/.codex/AGENTS.md` |
+| Claude Code | `~/.claude/CLAUDE.md` |
+| Gemini CLI | `~/.gemini/GEMINI.md` |
+| Amp | `~/.config/amp/AGENTS.md` |
+| Crush | `~/.config/crush/CRUSH.md` |
+| Qwen Code | `~/.qwen/QWEN.md` |
+| Cursor | None |
+
+Do not create `~/.codex/AGENTS.override.md`. That file shadows the copied file. When that file exists, add its path to Conflicts.
+
+Cursor has no global instructions file. When the user picks Cursor, tell them to paste the rules into Settings → Rules. Add Cursor to Skipped.
+
+Done: each picked agent is a write, a skip, or a Conflicts entry. Each agent the user did not pick stays untouched.
 
 ## MCP
 
@@ -111,6 +129,7 @@ Done: step 2, 4, 6, or 8 added to Conflicts. Or `openspec --version` prints a ve
 Run these commands from target. Add `-g` when the scope is personal. Add `-a <agent>` to install for one agent.
 
 ```sh
+npx skills add enemigos/skills --skill cold-email naval nuke research so to-pr to-trello vercel -y
 npx skills add mattpocock/skills --skill codebase-design domain-modeling grill-me grill-with-docs grilling handoff improve-codebase-architecture wizard writing-for-agents -y
 npx skills add vercel/ai@ai-sdk -y
 npx skills add vercel-labs/agent-skills --skill writing-guidelines vercel-react-best-practices -y
